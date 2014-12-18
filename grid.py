@@ -9,7 +9,11 @@ Created on Sat Jan 26 12:53:01 2013
 # TODO: Guessing/backtracking
 # TODO: Count loose ends in area (might be hard this one..)
 
-import Tkinter as tk
+import sys
+if sys.version_info >= (3, 0):
+    import tkinter as tk
+else:
+    import Tkinter as tk
 
 
 class Grid:
@@ -343,7 +347,7 @@ class Grid:
                             self.setLineVal(r, c+1, True, Grid.LINE_KEYS['LINE'], False)
                             self.setLineVal(r-1, c+1*(self.getCellVal(r, c+1)=='3'), True, Grid.LINE_KEYS['NOT_ALLOWED'], False)
                             self.setLineVal(r+1, c+1*(self.getCellVal(r, c+1)=='3'), True, Grid.LINE_KEYS['NOT_ALLOWED'], False)
-        print numUnresolvesNumbers, 'unresolved numbers remaining'
+        print('%i unresolved numbers remaining' % numUnresolvesNumbers)
 
         # Iterate over every dot and see if there are any cases where
         # some of the lines surrounding a dot can be determined.
@@ -372,7 +376,6 @@ class Grid:
                 for c in range(self.COLS+1):
                     if(self.countLinesSurroundingDot(r, c, Grid.LINE_KEYS['LINE'])==1):
                         [rx, cx] = self.findOtherEnd(r, c, -1)
-                        #print r, c, rx, cx
                         # TODO: Make this part more sophisticated (atm only checks for adjacent ends)
                         if(r==rx and abs(c-cx)==1):
                             self.setLineVal(r, c-1*(cx<c), False, Grid.LINE_KEYS['NOT_ALLOWED'], False)
@@ -408,16 +411,16 @@ class Grid:
         for r in range(2 * self.ROWS + 1):
             for c in range(2 * self.COLS + 1):
                 if(r%2==1 and c%2==1): # Boxes w/ numbers
-                    tk.Label(self.root, font=('arial', 18), text=self.PUZZLE[r/2][c/2], borderwidth=5, bg=bgcol).grid(row=r, column=c,sticky='nsew')
+                    tk.Label(self.root, font=('arial', 18), text=self.PUZZLE[r//2][c//2], borderwidth=5, bg=bgcol).grid(row=r, column=c,sticky='nsew')
                 elif(r%2==0 and c%2==0): # Dots between boxes (always static)
                     tk.Label(self.root, font=('arial',1), borderwidth=0, bg=fgcol).grid(row=r, column=c,sticky='nsew')
                 else: # Lines between boxes ()
                     lbl = tk.Label(self.root, font=('arial',5), text='   ', borderwidth=0, bg=bgcol)
                     lbl.grid(row=r, column=c,sticky='nsew')
                     if(r%2==1):
-                        self.vlinelabels[r/2][c/2] = lbl
+                        self.vlinelabels[r//2][c//2] = lbl
                     else:
-                        self.hlinelabels[r/2][c/2] = lbl
+                        self.hlinelabels[r//2][c//2] = lbl
 
         # Ensure columns and rows resize themselves when window is resized, but make boxes resize at 20x the rate of dots.
         for r in range(2 * self.ROWS + 1):
@@ -434,4 +437,5 @@ class Grid:
         self.root.mainloop()
 
 '''DRIVER'''
-puzzle1 = Grid(puzzle='Puzzles/p6.txt')
+if __name__ == '__main__':
+    _ = Grid(puzzle='Puzzles/p6.txt')
